@@ -1,0 +1,22 @@
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+captures/
+*.apk
+*.aab
+
+# signing material and secrets: never commit
+*.jks
+*.keystore
+keystore.properties
+*.p12
+*.pem
+.env
+
+# editor / manual backups
+*.bak
+*.bak[0-9]
+*.orig

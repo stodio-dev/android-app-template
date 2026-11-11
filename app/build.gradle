@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+}
+
+// versionCode = number of commits, the same formula on a PC and in GitHub Actions (checkout with
+// fetch-depth: 0), so every newer build installs over the older one wherever it was built. 1 outside git.
+def commitCount = 1
+try {
+    def out = providers.exec {
+        commandLine 'git', 'rev-list', '--count', 'HEAD'
+        ignoreExitValue true
+    }.standardOutput.asText.get().trim()
+    if (out ==~ /\d+/) commitCount = out.toInteger()
+} catch (Exception ignored) {
+}
+
+android {
+    namespace 'com.stodio.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId project.property('app.id')
+        minSdk 29          // Android 10
+        targetSdk 34       // 35+ forces edge-to-edge; bump when the screens handle insets
+        versionCode commitCount
+        versionName project.property('app.version')
+    }
+
+    // APP_DEBUG_KEYSTORE names the shared debug keystore (CI decodes it from the DEBUG_KEYSTORE_B64 secret; on a PC
+    // set the variable to your copy), so every build installs over the last. Without it AGP uses its default key.
+    signingConfigs {
+        debug {
+            def ks = System.getenv('APP_DEBUG_KEYSTORE')
+            if (ks) {
+                storeFile file(ks)
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // signed with the debug key so it can be side-loaded; replace for Google Play
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+// No dependencies on purpose: framework APIs only. Fast, stable cloud builds and a small APK.
+dependencies {
+}
