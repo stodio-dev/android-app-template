@@ -15,5 +15,5 @@ javac -nowarn -encoding UTF-8 -d "$out/classes" \
   $(find app/src/main/java -path '*/core/*.java') \
   $(find app/src/main/java -name Shaders.java) tools/gl-preview/Preview.java
 java -cp "$out/classes" com.stodio.arrowcubes.Preview "$level" "$skin" "$bg" "$taps" > "$out/level-$level.json"
-node tools/gl-preview/shot.js "$PWD/$out/level-$level.json" "$PWD/$out/level-$level.png" | grep -v "GPU stall" || true
+node tools/gl-preview/shot.js "$PWD/$out/level-$level.json" "$PWD/$out/level-$level.png" || true
 echo "picture: $out/level-$level.png"
