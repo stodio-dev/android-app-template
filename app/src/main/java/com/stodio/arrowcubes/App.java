@@ -1,4 +1,4 @@
-package com.stodio.app;
+package com.stodio.arrowcubes;
 
 import android.app.Application;
 import android.content.Context;
@@ -53,6 +53,8 @@ public final class App extends Application {
             }
         });
         log("start " + version(this));
+        Sfx.on = prefs(this).getBoolean("sound", true);
+        Sfx.init();
     }
 
     static App get() {

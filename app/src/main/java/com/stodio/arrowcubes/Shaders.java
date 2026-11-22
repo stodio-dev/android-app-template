@@ -1,0 +1,86 @@
+package com.stodio.arrowcubes;
+
+/** GLSL ES 1.00 sources (OpenGL ES 2.0). Plain strings, so a WebGL 1 compiler can check them off the phone. */
+final class Shaders {
+    private Shaders() {}
+
+    static final String BLOCK_VS = ""
+            + "uniform mat4 u_mvp;\n"
+            + "uniform mat4 u_rot;\n"
+            + "uniform vec3 u_offset;\n"
+            + "uniform vec3 u_center;\n"
+            + "uniform float u_scale;\n"
+            + "attribute vec3 a_pos;\n"
+            + "attribute vec3 a_nrm;\n"
+            + "attribute vec2 a_uv;\n"
+            + "attribute vec3 a_col;\n"
+            + "varying vec2 v_uv;\n"
+            + "varying vec3 v_col;\n"
+            + "varying vec3 v_nrm;\n"
+            + "void main() {\n"
+            + "  vec3 p = u_center + (a_pos - u_center) * u_scale + u_offset;\n"
+            + "  gl_Position = u_mvp * vec4(p, 1.0);\n"
+            + "  v_nrm = (u_rot * vec4(a_nrm, 0.0)).xyz;\n"
+            + "  v_uv = a_uv;\n"
+            + "  v_col = a_col;\n"
+            + "}\n";
+
+    /** R of the texture scales the block color, G paints the glyph, B the accent; then light and a flash tint. */
+    static final String BLOCK_FS = ""
+            + "precision mediump float;\n"
+            + "uniform sampler2D u_tex;\n"
+            + "uniform vec3 u_glyph;\n"
+            + "uniform vec3 u_accent;\n"
+            + "uniform vec3 u_light;\n"
+            + "uniform vec3 u_flashCol;\n"
+            + "uniform float u_flash;\n"
+            + "uniform float u_spec;\n"
+            + "uniform float u_alpha;\n"
+            + "varying vec2 v_uv;\n"
+            + "varying vec3 v_col;\n"
+            + "varying vec3 v_nrm;\n"
+            + "void main() {\n"
+            + "  vec3 t = texture2D(u_tex, v_uv).rgb;\n"
+            + "  vec3 n = normalize(v_nrm);\n"
+            + "  float diff = max(dot(n, u_light), 0.0);\n"
+            + "  vec3 base = v_col * t.r;\n"
+            + "  base = mix(base, u_accent, t.b);\n"
+            + "  base = mix(base, u_glyph, t.g);\n"
+            + "  vec3 c = base * (0.6 + 0.48 * diff);\n"
+            + "  vec3 h = normalize(u_light + vec3(0.0, 0.0, 1.0));\n"
+            + "  c += vec3(u_spec * 0.32 * pow(max(dot(n, h), 0.0), 24.0));\n"
+            + "  c = mix(c, u_flashCol, u_flash);\n"
+            + "  gl_FragColor = vec4(c, u_alpha);\n"
+            + "}\n";
+
+    static final String BG_VS = ""
+            + "attribute vec2 a_pos;\n"
+            + "varying vec2 v_p;\n"
+            + "void main() {\n"
+            + "  v_p = a_pos;\n"
+            + "  gl_Position = vec4(a_pos, 0.0, 1.0);\n"
+            + "}\n";
+
+    /** A vertical gradient with a soft vignette, and a fixed star field for the night skies. */
+    static final String BG_FS = ""
+            + "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+            + "precision highp float;\n"
+            + "#else\n"
+            + "precision mediump float;\n"
+            + "#endif\n"
+            + "uniform vec3 u_top;\n"
+            + "uniform vec3 u_bottom;\n"
+            + "uniform float u_stars;\n"
+            + "varying vec2 v_p;\n"
+            + "void main() {\n"
+            + "  vec3 c = mix(u_bottom, u_top, v_p.y * 0.5 + 0.5);\n"
+            + "  c *= 1.0 - 0.16 * dot(v_p, v_p) * 0.5;\n"
+            + "  if (u_stars > 0.5) {\n"
+            + "    vec2 cell = floor(gl_FragCoord.xy / 3.0);\n"
+            + "    float h = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);\n"
+            + "    float s = step(0.9965, h) * (0.45 + 0.55 * fract(h * 917.0));\n"
+            + "    c += vec3(s);\n"
+            + "  }\n"
+            + "  gl_FragColor = vec4(c, 1.0);\n"
+            + "}\n";
+}

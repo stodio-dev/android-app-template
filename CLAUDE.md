@@ -1,8 +1,17 @@
-# Android app template
+# קוביות חץ (Arrow Cubes)
 
-A template for Android apps that are written, built and installed without a PC: Claude edits this repo from a cloud
-session, GitHub Actions builds the APK, and the phone installs it from a fixed link. Make a new app with GitHub's
-"Use this template", then `bash tools/new-app.sh "<name>" <package> <ApkName>` (see README.he.md).
+A 3D puzzle game for Android: each level is a structure of cubes, every cube has an arrow, and a tapped cube slides
+out along its arrow only when nothing is in its way. Clear the structure; later levels add move limits, ice (two
+taps), stones (fixed) and locks that open after the gold cubes leave. Made from the android-app-template: Claude edits
+it from a cloud session, GitHub Actions builds the APK, the phone installs it from a fixed link.
+
+- `core/` (tested by `core-tests`): `Board` (grid, way-out checks, voxel raycast), `Shapes` (19 structures),
+  `LevelGen` (solvable by construction: it plays the level forward while assigning arrows), `Levels` (600 levels from
+  their number), `Game` (tap rules, stars), `Catalog` (skins, backgrounds, prices), `Mesh` (block faces as floats).
+- App: OpenGL ES 2.0 in `CubeRenderer` (static batch + animated blocks, picking), `GameView` (touch), `Atlas` (face
+  textures per skin), `Shaders`; screens `MainActivity`, `GameActivity`, `LevelsActivity`, `ShopActivity`.
+- Before pushing a renderer or shader change: `bash tools/gl-preview/run.sh <level>` renders it with the real shaders
+  in headless WebGL and prints the GLSL compiler's error if there is one.
 
 - The user writes Hebrew: answer in Hebrew. The app's UI text is Hebrew (RTL): `setLayoutDirection(RTL)` on the
   root views, `android:supportsRtl="true"`.

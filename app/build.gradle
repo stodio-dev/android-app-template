@@ -15,7 +15,7 @@ try {
 }
 
 android {
-    namespace 'com.stodio.app'
+    namespace 'com.stodio.arrowcubes'
     compileSdk 35
 
     defaultConfig {
