@@ -14,11 +14,20 @@ session, GitHub Actions builds the APK, and the phone installs it from a fixed l
   report. Log what helps debugging a phone you cannot reach; never log keys or personal data.
 - Keys the user enters (API keys and the like) go in the app's private preferences (`App.prefs`), never in the code.
 
+## Lessons log (`docs/lessons/`)
+- `docs/lessons/LESSONS.md` collects build errors and work methods from every app made from this template, in Hebrew;
+  `docs/lessons/RULES.md` is its format. Read its index at the start of a task. When a build, workflow or command
+  fails, search the log for words from the error before trying fixes.
+- After solving a problem that took more than one try, or finding a method that saves builds or time, add an entry
+  or update the existing one, following RULES.md: search first, never duplicate, the exact error line, no secrets.
+- An entry that applies to all apps also belongs in the template repo (`stodio-dev/android-app-template`); if this
+  session cannot push there, tell the user which entry to carry over.
+
 ## Cloud sessions (Claude Code on the web, from the phone)
 - There is no Android SDK there, so `gradlew assembleDebug` fails; do not try. Run `bash core-tests/run.sh`
   (plain JDK) before pushing, and read the code you changed carefully: compile errors only show up in Actions.
-  To catch them earlier, compile the sources against an `android.jar` of API 29+ with a stub `R` class, if one is at
-  hand.
+  To catch them earlier, compile the sources against an Android framework jar with a stub `R` class: the commands
+  are in docs/lessons BUILD-001.
 - Push straight to `main` unless the user asks for a branch. `.github/workflows/build.yml` then runs the core
   tests, builds the debug APK and replaces the `latest` release:
   `https://github.com/<owner>/<repo>/releases/download/latest/<app.apk>.apk` (`app.apk` in gradle.properties).

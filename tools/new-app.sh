@@ -49,5 +49,10 @@ s = open(p, encoding='utf-8').read()
 s = re.sub(r'(<string name="app_name">).*?(</string>)', lambda m: m.group(1) + html.escape(sys.argv[1], quote=False) + m.group(2), s)
 open(p, 'w', encoding='utf-8').write(s)
 PY
+# Stage everything: the git mv above leaves the index on the .tmp paths and the final folder untracked, so a plain
+# "git commit -a" would record a commit without the Java sources (docs/lessons PROC-001).
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git add -A app core-tests gradle.properties settings.gradle
+fi
 echo "done: $name ($pkg), APK $apk.apk"
 echo "now: bash core-tests/run.sh, then commit and push to main"
