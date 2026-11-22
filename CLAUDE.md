@@ -20,8 +20,11 @@ session, GitHub Actions builds the APK, and the phone installs it from a fixed l
   fails, search the log for words from the error before trying fixes.
 - After solving a problem that took more than one try, or finding a method that saves builds or time, add an entry
   or update the existing one, following RULES.md: search first, never duplicate, the exact error line, no secrets.
+  A failure nobody could explain gets an open entry (RULES §2), not silence.
 - An entry that applies to all apps also belongs in the template repo (`stodio-dev/android-app-template`); if this
   session cannot push there, tell the user which entry to carry over.
+- At the end of every task, tell the user which entries were added or updated, by ID, and which of them should be
+  carried over to the template.
 
 ## Cloud sessions (Claude Code on the web, from the phone)
 - There is no Android SDK there, so `gradlew assembleDebug` fails; do not try. Run `bash core-tests/run.sh`

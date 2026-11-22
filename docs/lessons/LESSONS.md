@@ -5,8 +5,8 @@
 
 חיפוש מהיר:
 ```bash
-grep -n -i "<מילה מהודעת השגיאה>" docs/lessons/LESSONS.md
-grep -n "^### BUILD-" docs/lessons/LESSONS.md
+grep -rn -i "<מילה מהודעת השגיאה>" docs/lessons/
+grep -rn "^### BUILD-" docs/lessons/
 ```
 
 ## אינדקס
@@ -45,7 +45,8 @@ grep -n "^### BUILD-" docs/lessons/LESSONS.md
 - **מניעה:** מריצים לפני כל push, אחרי `bash core-tests/run.sh`. מה שהבדיקה **לא** תופסת: קריאה ל־API חדש מ־`minSdk`
   (ה־jar הוא API 35), ממשקים מוסתרים (`@hide`, נמצאים ב־jar), שגיאות ב־`res/` וב־manifest, ושגיאות Gradle/AGP —
   אלה מתגלים רק ב־Actions. `-source 8` מקבל lambdas, שהתבנית אוסרת: בודקים בנפרד `grep -rn -- "->" app/src/main/java`.
-- **אומת:** קומפילציה של קוד התבנית הצליחה, ושגיאה מכוונת (`LAYOUT_DIRECTION_RTLX`) נתפסה: `error: cannot find symbol`. 2026-11-22
+- **אומת:** קומפילציה של קוד התבנית הצליחה, ושגיאה מכוונת (`LAYOUT_DIRECTION_RTLX`) נתפסה: `error: cannot find symbol`.
+  2026-11-22 · `android-all 15-robolectric-13954326` · JDK 21 מקומי (AGP 8.11.1 ו־Gradle 9.1.0 בקבצים, לא הורצו)
 - **נצפה:** 2026-11-22 (×1)
 
 ## CI
@@ -62,6 +63,7 @@ grep -n "^### BUILD-" docs/lessons/LESSONS.md
 - **מניעה:** סשן לא יכול להגדיר סודות. בתחילת עבודה על ריפו חדש בודקים אם ריצה קודמת נכשלה בשלב הזה
   (`actions/runs` של הריפו) ומבקשים מהמשתמש להוסיף את הסוד **לפני** ה־push הראשון, לא אחריו.
 - **אומת:** ריצה 43038756378 בריפו התבנית נכשלה בשלב הזה (2026-11-11), ונבדקה ב־2026-11-22.
+  `AGP 8.11.1 · Gradle 9.1.0 · java 21 · ubuntu-26.04/20261101.186.1`
 - **ראו גם:** PROC-002
 - **נצפה:** 2026-11-22 (×1)
 
