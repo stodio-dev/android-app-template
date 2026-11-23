@@ -60,5 +60,6 @@ session, GitHub Actions builds the APK, and the phone installs it from a fixed l
 2. `bash tools/new-app.sh "<name on the phone>" com.stodio.<app> <ApkName>`: renames the package everywhere and
    sets the name, package id and APK name, and records `template.repo` and `template.date` in gradle.properties.
    Replace the icon (`res/mipmap-*/ic_launcher.png`) when the app has one.
-3. The user adds the `DEBUG_KEYSTORE_B64` secret to the new repo (the same value for all their apps).
+3. The user adds the `DEBUG_KEYSTORE_B64` secret to the new repo: the shared key, whose certificate is `app.signer`.
+   It changed on 2026-11-23; an app with an earlier `template.date` (or none) keeps its own older key and signer.
 4. Rewrite this file's first paragraph for the new app, build the first screen, push, send the link.

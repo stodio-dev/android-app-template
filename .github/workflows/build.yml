@@ -51,10 +51,10 @@ jobs:
             # The most common failure of a new repo (docs/lessons CI-001): link straight to the page that fixes it,
             # in the log and in the run's summary, which is what the phone shows first.
             add="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/settings/secrets/actions/new"
-            echo "::error::The DEBUG_KEYSTORE_B64 secret is missing. Add it at $add (same value as in your other apps), then re-run this job."
+            echo "::error::The DEBUG_KEYSTORE_B64 secret is missing. Add it at $add (the shared signing key, saved when it was made), then re-run this job."
             {
               echo "### חסר מפתח החתימה (DEBUG_KEYSTORE_B64)"
-              echo "מוסיפים את הסוד \`DEBUG_KEYSTORE_B64\`, עם אותו ערך כמו בשאר האפליקציות, כאן: [$add]($add)"
+              echo "מוסיפים את הסוד \`DEBUG_KEYSTORE_B64\`, עם הערך של מפתח החתימה המשותף (ששמרתם כשנוצר), כאן: [$add]($add)"
               echo ""
               echo "ואז מריצים שוב: **Re-run jobs** בראש הדף."
             } >> "$GITHUB_STEP_SUMMARY"
