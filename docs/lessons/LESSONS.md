@@ -58,17 +58,23 @@ grep -rn "^### BUILD-" docs/lessons/
 - **חל על:** כל האפליקציות
 - **מצב:** פעיל
 - **תסמין:** ריצת `build` ב־Actions נכשלת תוך שניות בשלב `Debug keystore`, וכל השלבים אחריו `skipped` (אין APK ואין
-  release): `::error::The DEBUG_KEYSTORE_B64 secret is missing (Settings > Secrets and variables > Actions)`
+  release): `::error::The DEBUG_KEYSTORE_B64 secret is missing (Settings > Secrets and variables > Actions)`. מאז
+  `d120a28`: `::error::The DEBUG_KEYSTORE_B64 secret is missing. Add it at <url> (...), then re-run this job.`
 - **סיבה:** "Use this template" לא מעתיק סודות. כל ריפו חדש צריך את הסוד בעצמו, וגם לריפו התבנית אין אותו. החשבון
   `<owner>` הוא חשבון אישי ולא ארגון, ולכן אין סוד Actions משותף לכל הריפואים.
 - **פתרון:** המשתמש מוסיף בריפו: Settings ← Secrets and variables ← Actions ← New repository secret, בשם
   `DEBUG_KEYSTORE_B64`, עם אותו ערך כמו בשאר האפליקציות שלו. אחר כך מריצים שוב (Actions ← הריצה ← Re-run jobs) או דוחפים.
+  מאז `d120a28` (2026-11-23, אחרי ×3 — סעיף 8) הודעת השגיאה וסיכום הריצה מקשרים ישר לדף הוספת הסוד של אותו ריפו
+  (`$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/settings/secrets/actions/new`). אפליקציה שנוצרה לפני כן: מעתיקים את שלב
+  `Debug keystore` מה־workflow של התבנית. המצב נשאר `פעיל`, כי גם אפליקציה חדשה צריכה להוסיף את הסוד.
 - **מניעה:** סשן לא יכול להגדיר סודות. ריפו שנוצר מהתבנית מריץ build כבר על ה־`Initial commit`, וזו נכשלת בשלב הזה
   אם הסוד חסר. לפני ה־push הראשון בודקים את הריצה הזו (`actions/runs` של הריפו); אם נכשלה ב־`Debug keystore` —
   מבקשים מהמשתמש להוסיף את הסוד ומחכים, לא דוחפים.
 - **אומת:** ריצה 43038756378 בריפו התבנית נכשלה בשלב הזה (2026-11-11), ונבדקה ב־2026-11-22.
   `AGP 8.11.1 · Gradle 9.1.0 · java 21 · ubuntu-26.04/20261101.186.1`. שוב ב־2026-11-23 בריפו אפליקציה חדש
-  (`stodio-dev/Arrows_Puzzle`): ה־push הראשון נדחף בלי לבדוק את ריצת ה־`Initial commit`, ושתיהן נכשלו כאן.
+  (`stodio-dev/Arrows_Puzzle`): ה־push הראשון נדחף בלי לבדוק את ריצת ה־`Initial commit`, ושתיהן נכשלו כאן. הקישור
+  החדש נבדק בריצה 45143722918 שם: השגיאה הופיעה עם כתובת הדף של הריפו.
+  `AGP 8.11.1 · Gradle 9.1.0 · java 21 · ubuntu-26.04/20261116.202.1`
 - **ראו גם:** PROC-002
 - **נצפה:** 2026-11-23 (×3)
 
