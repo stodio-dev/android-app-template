@@ -48,7 +48,16 @@ jobs:
           KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_B64 }}
         run: |
           if [ -z "$KEYSTORE_B64" ]; then
-            echo "::error::The DEBUG_KEYSTORE_B64 secret is missing (Settings > Secrets and variables > Actions)"
+            # The most common failure of a new repo (docs/lessons CI-001): link straight to the page that fixes it,
+            # in the log and in the run's summary, which is what the phone shows first.
+            add="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/settings/secrets/actions/new"
+            echo "::error::The DEBUG_KEYSTORE_B64 secret is missing. Add it at $add (same value as in your other apps), then re-run this job."
+            {
+              echo "### חסר מפתח החתימה (DEBUG_KEYSTORE_B64)"
+              echo "מוסיפים את הסוד \`DEBUG_KEYSTORE_B64\`, עם אותו ערך כמו בשאר האפליקציות, כאן: [$add]($add)"
+              echo ""
+              echo "ואז מריצים שוב: **Re-run jobs** בראש הדף."
+            } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
           # spaces or line breaks from pasting it on a phone are dropped
