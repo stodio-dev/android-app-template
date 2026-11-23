@@ -6,6 +6,11 @@ name: build
 
 on:
   push:
+    # A push that changes only documentation (the lessons log, CLAUDE.md, README) builds nothing and leaves
+    # the "latest" release as it is. A push that also touches anything else builds as usual.
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
   workflow_dispatch:
 
 permissions:

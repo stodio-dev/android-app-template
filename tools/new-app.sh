@@ -9,7 +9,9 @@
 #   3. the APK file name in the "latest" release (Latin letters and digits, no spaces)
 #
 # It renames the Java package com.stodio.app to the new one (sources, tests, namespace, test runners) and sets
-# app.id / app.apk in gradle.properties, app_name in strings.xml and rootProject.name. Then: commit, push, done.
+# app.id / app.apk in gradle.properties, app_name in strings.xml and rootProject.name. It also records where the app
+# came from (template.repo, template.date in gradle.properties) and marks docs/lessons/ as a read-only snapshot of the
+# template's lessons log. Then: commit, push, done.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -49,10 +51,28 @@ s = open(p, encoding='utf-8').read()
 s = re.sub(r'(<string name="app_name">).*?(</string>)', lambda m: m.group(1) + html.escape(sys.argv[1], quote=False) + m.group(2), s)
 open(p, 'w', encoding='utf-8').write(s)
 PY
+# Record where this app came from. GitHub keeps no link from a repo made with "Use this template" back to the
+# template, and two things need it: the template repo is the source of the lessons log (CLAUDE.md), and the date says
+# which template fixes the app already has (docs/lessons/RULES.md §6).
+template_repo=stodio-dev/android-app-template
+today=$(date +%F)
+sed -i '/^template\./d' gradle.properties
+if [ -n "$(tail -c1 gradle.properties)" ]; then echo >> gradle.properties; fi
+printf 'template.repo=%s\ntemplate.date=%s\n' "$template_repo" "$today" >> gradle.properties
+if [ -d docs/lessons ]; then
+  sed -e "s#@DATE@#$today#" -e "s#@REPO@#$template_repo#" > docs/lessons/README.md <<'EOF'
+# צילום של יומן הלקחים
+
+צילום מתאריך @DATE@, **לקריאה בלבד**: גיבוי למקרה שאין גישה למקור, ולא המקום לכתוב בו.
+המקור: https://github.com/@REPO@ (`docs/lessons/`). קוראים וכותבים שם.
+מה שנשאר באפליקציה: `APP.md` (לקחים שייחודיים לאפליקציה) ו־`PENDING.md` (לקחים כלליים שלא הגיעו לתבנית).
+הכללים: `RULES.md` §8.
+EOF
+fi
 # Stage everything: the git mv above leaves the index on the .tmp paths and the final folder untracked, so a plain
 # "git commit -a" would record a commit without the Java sources (docs/lessons PROC-001).
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git add -A app core-tests gradle.properties settings.gradle
+  git add -A app core-tests gradle.properties settings.gradle docs/lessons
 fi
 echo "done: $name ($pkg), APK $apk.apk"
 echo "now: bash core-tests/run.sh, then commit and push to main"
